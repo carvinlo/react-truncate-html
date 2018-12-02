@@ -6,7 +6,7 @@
 
 import PropTypes from "prop-types";
 import React, { Component } from "react";
-import xss from "xss";
+// import xss from "xss";
 
 const isServer = () => typeof window === "undefined";
 
@@ -44,12 +44,16 @@ class Truncate extends Component {
       );
       return null;
     }
-    const { dangerouslySetInnerHTML } = this.props;
+    const { dangerouslySetInnerHTML, more } = this.props;
     const { __html } = dangerouslySetInnerHTML;
-    const html = { __html: xss(__html) };
+    // const html = { __html: xss(__html) };
+    const html = { __html: __html };
 
     return (
-      <span ref="paragraph" {...passedProps} dangerouslySetInnerHTML={html} />
+      <span>
+        <span ref="paragraph" {...passedProps} dangerouslySetInnerHTML={html} />
+        {(this.showMoreButton && more) || ""}
+      </span>
     );
   }
 
@@ -191,8 +195,15 @@ class Truncate extends Component {
       childText = element.childNodes[0].nodeValue;
     }
     if (this.props.breakWord) {
+      let moreSpacing = 0;
+      if (this.props.more) {
+        moreSpacing = -(this.props.moreSpacing || 8);
+        this.showMoreButton = true;
+        this.forceUpdate();
+      }
       element.childNodes[0].nodeValue =
-        childText.slice(0, -this.props.ellipsis.length) + this.props.ellipsis;
+        childText.slice(0, -this.props.ellipsis.length + moreSpacing) +
+        this.props.ellipsis;
       if (this.isNotCorrect()) {
         //edge case
         element.childNodes[0].nodeValue =
@@ -265,8 +276,14 @@ class Truncate extends Component {
           }
 
           if (this.props.breakWord) {
+            let moreSpacing = 0;
+            if (this.props.more) {
+              moreSpacing = -(this.props.moreSpacing || 8);
+              this.showMoreButton = true;
+              this.forceUpdate();
+            }
             domChilds[i].nodeValue =
-              childText.slice(0, -this.props.ellipsis.length) +
+              childText.slice(0, -this.props.ellipsis.length + moreSpacing) +
               this.props.ellipsis;
             if (this.isNotCorrect()) {
               //edge case
@@ -306,8 +323,14 @@ class Truncate extends Component {
             childText = domChilds[i].innerText;
           }
           if (this.props.breakWord) {
+            let moreSpacing = 0;
+            if (this.props.more) {
+              moreSpacing = -(this.props.moreSpacing || 8);
+              this.showMoreButton = true;
+              this.forceUpdate();
+            }
             domChilds[i].innerHTML =
-              childText.slice(0, -this.props.ellipsis.length) +
+              childText.slice(0, -this.props.ellipsis.length + moreSpacing) +
               this.props.ellipsis;
             if (this.isNotCorrect()) {
               //edge case
