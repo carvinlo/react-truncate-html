@@ -57,6 +57,16 @@ class Truncate extends Component {
     );
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if (
+      nextProps.dangerouslySetInnerHTML.__html !==
+      this.props.dangerouslySetInnerHTML.__html
+    ) {
+      this.breakWord = false;
+    }
+    return true;
+  }
+
   componentDidUpdate(prevProps) {
     if (
       prevProps.dangerouslySetInnerHTML !== this.props.dangerouslySetInnerHTML
